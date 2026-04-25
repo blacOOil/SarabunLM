@@ -1,5 +1,8 @@
-Doc_format = "ResearchPaper"  # @param ["Default", "ResearchPaper","B", "C"]
+Doc_format = "ResearchPaper" 
 FormatPromting = ""
+
+Section_Number = 0
+Section_Name = ""
 # Document Format Property
 SetFont_Family = ""
 SetFont_Size = 0
