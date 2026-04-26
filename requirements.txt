@@ -1,3 +1,7 @@
 fpdf2
 request
 numpy
+fastapi
+uvicorn
+jinja2
+python-multipart
