@@ -7,15 +7,43 @@
   <link rel="stylesheet" href="api/Ui/style.css" />
 </head>
 <body>
-  <header>
-    <h1> SarabunLM version 1</h1>
-  </header>
-
-  <main>
-    <input type="text" id="nameInput" placeholder="Enter your name" />
-    <div id=""></div>
-  </main>
-
-  <script src="api/Ui/app.js"></script>
+ 
+    <!-- HEADER -->
+    <header class="header">
+        <div class="header__brand">SARABUNLM</div>
+        <div class="header__controls">
+            <label class="header__label" for="template-select">Template</label>
+            <select class="header__select" id="template-select">
+                <option>SARABUNLM</option>
+                <option>Template A</option>
+                <option>Template B</option>
+            </select>
+        </div>
+    </header>
+ 
+    <!-- MAIN LAYOUT -->
+    <div class="layout">
+ 
+        <!-- SIDEBAR -->
+        <aside class="sidebar">
+            <div class="sidebar__sections" id="sections-container">
+                <!-- Sections injected by JS -->
+            </div>
+            <div class="sidebar__footer">
+                <button class="btn-add" id="btn-add-section">+ Add Section</button>
+                <button class="btn-generate" id="btn-generate">Generate</button>
+            </div>
+        </aside>
+ 
+        <!-- DOCUMENT PREVIEW -->
+        <main class="main">
+            <div class="document-page" id="document-preview">
+                <div class="doc-placeholder">Preview will appear here after clicking Generate</div>
+            </div>
+        </main>
+ 
+    </div>
+    <script src="api/Ui/app.js"></script>
+   
 </body>
 </html>
