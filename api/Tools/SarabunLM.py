@@ -1,5 +1,6 @@
 import importlib
 import re
+import sys
 import fpdf
 import DocFormat
 import SetupDocFile
@@ -12,7 +13,7 @@ print("fpdf version:", fpdf.__version__)
 print("DocFormat version:", DocFormat.Doc_format)
 setup_doc_file = SetupDocFile.SetupDocFile()
 pdf = setup_doc_file.create_pdf()
-ai_output = "This is the AI output. **This line should not be bold. **Another bold line.**"
+ai_output = "Test **bold** and normal text.\nNew line with **bold** word.\nAnother line without bold."
 
 def write_line_with_bold(pdf, line, line_height=8):
 

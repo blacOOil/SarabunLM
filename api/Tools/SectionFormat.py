@@ -1,4 +1,4 @@
-Section_format = ""
+Section_format = "Introduction"
 
 SetFont_Family = ""
 SetFont_Size = 0

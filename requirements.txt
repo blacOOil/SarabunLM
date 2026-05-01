@@ -2,6 +2,8 @@ fpdf2
 request
 numpy
 fastapi
-uvicorn
+uvicorn[standard]
 jinja2
 python-multipart
+reportlab
+pywebview

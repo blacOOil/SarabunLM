@@ -2,19 +2,38 @@
    STATE
 ============================================================ */
 let sectionCount = 0;
-
-
 /* ============================================================
    INIT
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
+    TemplateSelector(); // Initialize template selector 
     addSection(); // Start with one section by default
 
     document.getElementById('btn-add-section').addEventListener('click', addSection);
     document.getElementById('btn-generate').addEventListener('click', generateDocument);
 });
+ function TemplateSelector() {
+        const selectElement = document.getElementById('template-select');
 
 
+    // Triggered when the dropdown value changes
+        selectElement.addEventListener('change', (event) => {
+        const selectedValue = event.target.value; 
+                // Log the interaction
+                const timestamp = new Date().toLocaleTimeString();
+                console.log(`[${timestamp}] JS Triggered: Template changed to "${selectedValue}"`);
+                
+                // You can add more complex logic here (e.g., fetching data, changing styles)
+                if (selectedValue === "Marriage_Paper") {
+                 
+                } else if (selectedValue === "Research_Paper") {
+                  
+                } else {
+                    display.style.color = "var(--primary)";
+                }
+            });
+        };
+ 
 /* ============================================================
    ADD SECTION
    Creates a new section card and appends it to the sidebar
@@ -54,7 +73,6 @@ function removeSection(btn) {
     btn.closest('.section-card').remove();
 }
 
-
 /* ============================================================
    COLLECT SECTIONS
    Reads all section cards and returns an array of { type, content }
@@ -74,7 +92,6 @@ function collectSections() {
     return sections;
 }
 
-
 /* ============================================================
    GENERATE DOCUMENT
    Shows a loader then renders the preview after a short delay
@@ -90,7 +107,6 @@ function generateDocument() {
     // Swap with a real API call (e.g. fetch('/api/generate', ...)) if needed
     setTimeout(() => renderPreview(sections), 500);
 }
-
 
 /* ============================================================
    RENDER PREVIEW
@@ -115,7 +131,6 @@ function renderPreview(sections) {
 
     preview.innerHTML = html;
 }
-
 
 /* ============================================================
    UTILITY: ESCAPE HTML
