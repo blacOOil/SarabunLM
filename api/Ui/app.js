@@ -9,6 +9,7 @@ let appConfig = {};
         const response = await fetch('/config');
         appConfig = await response.json();
         console.log("Config loaded:", appConfig);
+        buildTemplateOptions();
         // appConfig.section_number  → 5
         // appConfig.section_names   → { "1": "Introduction", ... }
         // appConfig.doc_format      → "ResearchPaper"
@@ -21,7 +22,6 @@ let appConfig = {};
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
     loadConfig()
-    buildSectionOptions(); // Populate section type dropdown
     TemplateSelector(); // Initialize template selector 
     addSection(); // Start with one section by default
 
@@ -32,24 +32,10 @@ document.addEventListener('DOMContentLoaded', () => {
    Template Selector
    Selects template for call section data from  SarabunLM.py
 ============================================================ */
- function buildSectionOptions() {
-    const select = document.getElementById('section-type-select');
-    if (!select) return;
-
-    // Clear existing options except the placeholder
-    select.innerHTML = '<option value="">— Section Type —</option>';
-
-    const names = appConfig.section_names || {};
-    Object.entries(names).forEach(([key, name]) => {
-        const option = document.createElement('option');
-        option.value = key;
-        option.textContent = name;
-        select.appendChild(option);
-    });
-}
 
 function TemplateSelector() {
         const selectElement = document.getElementById('template-select');
+
     // Triggered when the dropdown value changes
         selectElement.addEventListener('change', (event) => {
                 const selectedValue = event.target.value; 
@@ -59,15 +45,45 @@ function TemplateSelector() {
                 
                 // You can add more complex logic here (e.g., fetching data, changing styles)
                 if (selectedValue === 1) {
-                 
+                    buildSectionOptions(appConfig.section_names);
                 } else if (selectedValue === 2) {
-
+                    buildSectionOptions(appConfig.section_names);
                 } else {
-                    display.style.color = 0;
+                   
                 }
             });
         };
- 
+   function buildSectionOptions(sectionNames = {}) {
+    const select = document.getElementById('section-type-select');
+    if (!select) return;
+
+    select.innerHTML = '<option value="">— Section Type —</option>';
+
+    Object.entries(sectionNames).forEach(([key, name]) => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = name;
+        select.appendChild(option);
+    });
+}
+function buildTemplateOptions() {
+    const select = document.getElementById('template-select');
+    if (!select) return;
+
+    select.innerHTML = '<option value="0">None</option>';
+
+    const keys = Object.keys(appConfig);
+    console.log(`Found ${keys.length} templates:`, keys);
+
+    for (let i = 0; i < keys.length; i++) {
+        const option = document.createElement('option');
+        option.value = i + 1;
+        option.textContent = keys[i];
+        select.appendChild(option);
+    }
+
+    console.log("Template options built:", keys.length, "options");
+}
 /* ============================================================
    ADD SECTION
    Creates a new section card and appends it to the sidebar
