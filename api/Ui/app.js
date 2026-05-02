@@ -16,7 +16,7 @@ let appConfig = {};
     } catch (err) {
         console.error("Failed to load config:", err);
     }
-                                }
+  }
 /* ============================================================
    INIT
 ============================================================ */
@@ -32,27 +32,28 @@ document.addEventListener('DOMContentLoaded', () => {
    Template Selector
    Selects template for call section data from  SarabunLM.py
 ============================================================ */
-
 function TemplateSelector() {
-        const selectElement = document.getElementById('template-select');
+    const selectElement = document.getElementById('template-select');
 
-    // Triggered when the dropdown value changes
-        selectElement.addEventListener('change', (event) => {
-                const selectedValue = event.target.value; 
-                // Log the interaction
-                const timestamp = new Date().toLocaleTimeString();
-                console.log(`[${timestamp}] JS Triggered: Template changed to "${selectedValue}"`);
-                
-                // You can add more complex logic here (e.g., fetching data, changing styles)
-                if (selectedValue === 1) {
-                    buildSectionOptions(appConfig.section_names);
-                } else if (selectedValue === 2) {
-                    buildSectionOptions(appConfig.section_names);
-                } else {
-                   
-                }
-            });
-        };
+    selectElement.addEventListener('change', (event) => {
+        const selectedValue = event.target.value;
+        const timestamp = new Date().toLocaleTimeString();
+        console.log(`[${timestamp}] JS Triggered: Template changed to "${selectedValue}"`);
+
+        if (selectedValue === "0" || selectedValue === "") return; // Skip "None"
+
+
+        const keys = Object.keys(appConfig);
+        const keyIndex = Number(selectedValue) - 1; 
+        const templateKey = keys[keyIndex];
+        const templateData = appConfig[templateKey];
+        const sectionNames = templateData?.section_names || {}; 
+
+        if (templateData) {
+            addSectionFromTemplate(selectedValue, templateKey, templateData, sectionNames);
+        }
+    });}
+
    function buildSectionOptions(sectionNames = {}) {
     const select = document.getElementById('section-type-select');
     if (!select) return;
@@ -113,7 +114,36 @@ function addSection() {
     container.appendChild(card);
     container.scrollTop = container.scrollHeight;
 }
+function addSectionFromTemplate(value, templateKey, templateData, sectionNames) {
+    const container = document.getElementById('sections-container');
 
+    // If no section_names, fall back to one generic card
+    const entries = Object.entries(sectionNames);
+    if (entries.length === 0) {
+      
+        // ... your existing single-card logic
+        return;
+    }
+
+    entries.forEach(([key, sectionName]) => {
+        sectionCount++;
+
+        const card = document.createElement('div');
+        card.className = 'section-card';
+        card.dataset.id = sectionCount;
+
+        card.innerHTML = `
+            <div class="section-card__header">
+                <span class="section-card__label"> ${sectionName}</span>
+                <button class="section-card__remove" title="Remove section" onclick="removeSection(this)">×</button>
+            </div>
+            <textarea class="section-card__textarea" placeholder="Enter content for ${sectionName}…"></textarea>
+        `;
+        container.appendChild(card);
+    });
+
+    container.scrollTop = container.scrollHeight;
+}
 
 /* ============================================================
    REMOVE SECTION
