@@ -2,34 +2,68 @@
    STATE
 ============================================================ */
 let sectionCount = 0;
+let appConfig = {};
+
+ async function loadConfig() {
+    try {
+        const response = await fetch('/config');
+        appConfig = await response.json();
+        console.log("Config loaded:", appConfig);
+        // appConfig.section_number  → 5
+        // appConfig.section_names   → { "1": "Introduction", ... }
+        // appConfig.doc_format      → "ResearchPaper"
+    } catch (err) {
+        console.error("Failed to load config:", err);
+    }
+                                }
 /* ============================================================
    INIT
 ============================================================ */
 document.addEventListener('DOMContentLoaded', () => {
+    loadConfig()
+    buildSectionOptions(); // Populate section type dropdown
     TemplateSelector(); // Initialize template selector 
     addSection(); // Start with one section by default
 
     document.getElementById('btn-add-section').addEventListener('click', addSection);
     document.getElementById('btn-generate').addEventListener('click', generateDocument);
 });
- function TemplateSelector() {
+/* ============================================================
+   Template Selector
+   Selects template for call section data from  SarabunLM.py
+============================================================ */
+ function buildSectionOptions() {
+    const select = document.getElementById('section-type-select');
+    if (!select) return;
+
+    // Clear existing options except the placeholder
+    select.innerHTML = '<option value="">— Section Type —</option>';
+
+    const names = appConfig.section_names || {};
+    Object.entries(names).forEach(([key, name]) => {
+        const option = document.createElement('option');
+        option.value = key;
+        option.textContent = name;
+        select.appendChild(option);
+    });
+}
+
+function TemplateSelector() {
         const selectElement = document.getElementById('template-select');
-
-
     // Triggered when the dropdown value changes
         selectElement.addEventListener('change', (event) => {
-        const selectedValue = event.target.value; 
+                const selectedValue = event.target.value; 
                 // Log the interaction
                 const timestamp = new Date().toLocaleTimeString();
                 console.log(`[${timestamp}] JS Triggered: Template changed to "${selectedValue}"`);
                 
                 // You can add more complex logic here (e.g., fetching data, changing styles)
-                if (selectedValue === "Marriage_Paper") {
+                if (selectedValue === 1) {
                  
-                } else if (selectedValue === "Research_Paper") {
-                  
+                } else if (selectedValue === 2) {
+
                 } else {
-                    display.style.color = "var(--primary)";
+                    display.style.color = 0;
                 }
             });
         };
@@ -98,7 +132,6 @@ function collectSections() {
 ============================================================ */
 function generateDocument() {
     const preview = document.getElementById('document-preview');
-
     // Show loading spinner
     preview.innerHTML = '<div class="loader"></div>';
 

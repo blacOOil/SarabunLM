@@ -10,6 +10,7 @@ from pydantic import BaseModel
 from typing import Optional
 import uvicorn
 import sys
+import api.Tools.DocFormat as DocFormat
 from pathlib import Path
 
 
@@ -36,7 +37,10 @@ print("Tools dir:", Tool_DIR )
 # ============================================================
 class GenerateRequest(BaseModel):
     ai_output: str
-
+class ConfigResponse(BaseModel):
+    doc_format: str
+    section_number: int
+    section_names: dict
 # ============================================================
 # ROUTES
 # ============================================================
@@ -50,6 +54,22 @@ def get_style():
 @app.get("/api/Ui/app.js")
 def get_script():
     return FileResponse(os.path.join(UI_DIR, "app.js"))
+@app.get("/config")
+def get_config(data:ConfigResponse):
+    config = DocFormat.Config_Document_Format.get(DocFormat.Doc_format)
+    if not config:
+        raise HTTPException(status_code=404, detail="Config not found.")
+    return {
+        "doc_format": DocFormat.Doc_format,
+        "section_number": DocFormat.Section_Number,
+        "section_names": DocFormat.Section_Name
+    }
+@app.post("/config")
+def update_config(config: ConfigResponse):
+    DocFormat.Doc_format = config.doc_format
+    DocFormat.Section_Number = config.section_number
+    DocFormat.Section_Name = config.section_names
+    return {"message": "Config updated successfully."}
 @app.post("/generate")
 def generate(data: GenerateRequest):
     env = os.environ.copy()

@@ -13,7 +13,10 @@ print("fpdf version:", fpdf.__version__)
 print("DocFormat version:", DocFormat.Doc_format)
 setup_doc_file = SetupDocFile.SetupDocFile()
 pdf = setup_doc_file.create_pdf()
-ai_output = "Test **bold** and normal text.\nNew line with **bold** word.\nAnother line without bold."
+ai_output = os.environ.get("AI_OUTPUT", "")
+if not ai_output:
+    print("ERROR: No AI_OUTPUT provided.")
+    sys.exit(1)
 
 def write_line_with_bold(pdf, line, line_height=8):
 
