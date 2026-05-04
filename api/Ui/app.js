@@ -1,9 +1,8 @@
-/* ============================================================
-   Pdf Viewer Setup
-============================================================ */
-import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
 
+import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
 pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+
+const DEFAULT_PDF_URL = '/api/Tools/LLM/DataStorage/outputs/output.pdf';
 
 class PDFViewer {
     constructor() {
@@ -12,6 +11,25 @@ class PDFViewer {
         this.observer = null;
         this.renderQueue = new Set();
         this.init();
+    }
+
+    async loadFromUrl(url) {
+        this.showLoader(0.1);
+        try {
+            this.pdfDoc = await pdfjsLib.getDocument({
+                url,
+                verbosity: 0,
+                isEvalSupported: false,
+                useSystemFonts: true
+            }).promise;
+
+            document.getElementById('dropzone').style.display = 'none';
+            this.renderAllPlaceholders();
+            this.setupIntersectionObserver();
+        } catch (err) {
+            console.error('Error loading PDF from URL:', err);
+            alert('Could not load PDF from URL.');
+        }
     }
 
     init() {
@@ -23,6 +41,11 @@ class PDFViewer {
             e.preventDefault();
             this.handleFile(e.dataTransfer.files[0]);
         });
+
+        // Auto-load from HTML data attribute
+        const viewer = document.getElementById('viewer');
+        const url = viewer?.dataset.pdfUrl;
+        if (url) this.loadFromUrl(url);
     }
 
     async handleFile(file) {
@@ -122,7 +145,6 @@ class PDFViewer {
 }
 
 new PDFViewer();
-
 
 /* ============================================================
    STATE
@@ -394,3 +416,4 @@ function escapeHtml(str) {
         .replace(/"/g,  '&quot;')
         .replace(/\n/g, '<br>');
 }
+

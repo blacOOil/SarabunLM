@@ -44,8 +44,9 @@ result = subprocess.run(
 print("STDOUT:", result.stdout)
 print("STDERR:", result.stderr)
 print("Return code:", result.returncode)
+
 app = FastAPI()
-app.mount("/static", StaticFiles(directory=str(UI_DIR)), name="static")
+
 app.add_middleware(
     CORSMiddleware,
     allow_origins=["*"],
@@ -79,7 +80,10 @@ def get_style():
 
 @app.get("/api/Ui/app.js")
 def get_script():
-    return FileResponse(UI_DIR / "app.js")
+    return FileResponse(
+        UI_DIR / "app.js",
+        media_type="application/javascript" 
+    )
 
 @app.get("/favicon.ico")
 def favicon():
@@ -105,3 +109,10 @@ def get_config():
 # ============================================================
 # ROUTES — GENERATE
 # ============================================================
+@app.get("/api/Tools/LLM/DataStorage/outputs/output.pdf")
+def get_output_pdf():
+    pdf_path = TOOL_DIR / "LLM" / "DataStorage" / "outputs" / "output.pdf"
+    if pdf_path.exists():
+        return FileResponse(pdf_path, media_type="application/pdf")
+    raise HTTPException(status_code=404, detail="PDF not found.")
+app.mount("/api/Ui", StaticFiles(directory=str(UI_DIR)), name="ui")
