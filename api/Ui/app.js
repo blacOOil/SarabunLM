@@ -1,4 +1,130 @@
 /* ============================================================
+   Pdf Viewer Setup
+============================================================ */
+import * as pdfjsLib from 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.min.mjs';
+
+pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/4.0.379/pdf.worker.min.mjs';
+
+class PDFViewer {
+    constructor() {
+        this.pdfDoc = null;
+        this.pages = [];
+        this.observer = null;
+        this.renderQueue = new Set();
+        this.init();
+    }
+
+    init() {
+        const fileInput = document.getElementById('fileInput');
+        fileInput.onchange = (e) => this.handleFile(e.target.files[0]);
+
+        window.addEventListener('dragover', (e) => e.preventDefault());
+        window.addEventListener('drop', (e) => {
+            e.preventDefault();
+            this.handleFile(e.dataTransfer.files[0]);
+        });
+    }
+
+    async handleFile(file) {
+        if (!file || file.type !== 'application/pdf') return;
+        this.showLoader(0.1);
+        const arrayBuffer = await file.arrayBuffer();
+        this.loadPDF(arrayBuffer);
+    }
+
+    async loadPDF(data) {
+        try {
+            this.pdfDoc = await pdfjsLib.getDocument({
+                data,
+                verbosity: 0,
+                isEvalSupported: false,
+                useSystemFonts: true
+            }).promise;
+
+            document.getElementById('dropzone').style.display = 'none';
+            this.renderAllPlaceholders();
+            this.setupIntersectionObserver();
+        } catch (err) {
+            console.error('Error loading PDF:', err);
+            alert('Could not load PDF. Is it password protected?');
+        }
+    }
+
+    renderAllPlaceholders() {
+        const viewer = document.getElementById('viewer');
+        viewer.innerHTML = '';
+        this.pages = [];
+
+        for (let i = 1; i <= this.pdfDoc.numPages; i++) {
+            const container = document.createElement('div');
+            container.className = 'page-container';
+            container.id = `page-wrap-${i}`;
+            container.dataset.page = i;
+
+            const canvas = document.createElement('canvas');
+            container.appendChild(canvas);
+
+            const label = document.createElement('div');
+            label.className = 'page-num-overlay';
+            label.textContent = `Page ${i}`;
+            container.appendChild(label);
+
+            viewer.appendChild(container);
+            this.pages.push({ i, container, canvas, rendered: false });
+        }
+    }
+
+    setupIntersectionObserver() {
+        this.observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    const pageNum = parseInt(entry.target.dataset.page);
+                    this.renderPage(pageNum);
+                }
+            });
+        }, { root: document.getElementById('viewer'), threshold: 0.1 });
+
+        this.pages.forEach(p => this.observer.observe(p.container));
+    }
+
+    async renderPage(num) {
+        const pageData = this.pages[num - 1];
+        if (pageData.rendered || this.renderQueue.has(num)) return;
+
+        this.renderQueue.add(num);
+        const page = await this.pdfDoc.getPage(num);
+
+        const viewport = page.getViewport({ scale: window.devicePixelRatio });
+        const canvas = pageData.canvas;
+        const ctx = canvas.getContext('2d', { alpha: false });
+
+        canvas.height = viewport.height;
+        canvas.width = viewport.width;
+        canvas.style.width = `${viewport.width / window.devicePixelRatio}px`;
+        pageData.container.style.height = 'auto';
+
+        await page.render({
+            canvasContext: ctx,
+            viewport,
+            intent: 'display'
+        }).promise;
+
+        pageData.rendered = true;
+        this.renderQueue.delete(num);
+        this.showLoader(num / this.pdfDoc.numPages);
+    }
+
+    showLoader(progress) {
+        const l = document.getElementById('loader');
+        l.style.transform = `scaleX(${progress})`;
+        if (progress >= 1) setTimeout(() => l.style.transform = 'scaleX(0)', 500);
+    }
+}
+
+new PDFViewer();
+
+
+/* ============================================================
    STATE
 ============================================================ */
 let sectionCount = 0;
@@ -17,6 +143,45 @@ let appConfig = {};
         console.error("Failed to load config:", err);
     }
   }
+ /* async function sentgenerateDocument() {
+     const preview = document.getElementById('document-preview');
+    preview.innerHTML = '<div class="loader"></div>';
+
+    const sections = collectSections();
+    if (sections.length === 0) {
+        preview.innerHTML = '<div class="doc-placeholder">Please enter some content.</div>';
+        return;
+    }
+
+    const ai_output = sections
+        .map(({ type, content }) => `[${type.toUpperCase()}]\n${content}`)
+        .join('\n\n');
+
+    // Get the selected template name from the dropdown
+    const template_key = document.getElementById('template-select')
+                                 .selectedOptions[0]?.text || "Default";
+
+    try {
+        const response = await fetch('/generate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ ai_output, template_key })  // ← goes here
+        });
+
+        const result = await response.json();
+
+        if (!response.ok) {
+            preview.innerHTML = `<div class="doc-error">Error: ${result.detail}</div>`;
+            return;
+        }
+
+        preview.innerHTML = `<div class="doc-success">${result.message}</div>`;
+
+    } catch (err) {
+        preview.innerHTML = `<div class="doc-error">Request failed: ${err.message}</div>`;
+    }
+} */
+  
 /* ============================================================
    INIT
 ============================================================ */
@@ -26,7 +191,7 @@ document.addEventListener('DOMContentLoaded', () => {
     addSection(); // Start with one section by default
 
     document.getElementById('btn-add-section').addEventListener('click', addSection);
-    document.getElementById('btn-generate').addEventListener('click', generateDocument);
+  //  document.getElementById('btn-generate').addEventListener('click', generateDocument);
 });
 /* ============================================================
    Template Selector
@@ -162,8 +327,15 @@ function collectSections() {
     const sections = [];
 
     cards.forEach(card => {
-        const type    = card.querySelector('select').value;
-        const content = card.querySelector('textarea').value.trim();
+        const selectEl   = card.querySelector('.section-card__select');
+        const textareaEl = card.querySelector('.section-card__textarea');
+
+        // Guard: skip if elements missing
+        if (!selectEl || !textareaEl) return;
+
+        const type    = selectEl.value;
+        const content = textareaEl.value.trim();
+
         if (content) {
             sections.push({ type, content });
         }
@@ -171,12 +343,11 @@ function collectSections() {
 
     return sections;
 }
-
 /* ============================================================
    GENERATE DOCUMENT
    Shows a loader then renders the preview after a short delay
 ============================================================ */
-function generateDocument() {
+/*function generateDocument() {
     const preview = document.getElementById('document-preview');
     // Show loading spinner
     preview.innerHTML = '<div class="loader"></div>';
@@ -185,7 +356,7 @@ function generateDocument() {
 
     // Swap with a real API call (e.g. fetch('/api/generate', ...)) if needed
     setTimeout(() => renderPreview(sections), 500);
-}
+}*/
 
 /* ============================================================
    RENDER PREVIEW

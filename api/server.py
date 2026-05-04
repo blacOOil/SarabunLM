@@ -12,6 +12,7 @@ from pydantic import BaseModel
 
 import api.Tools.DocFormat as DocFormat
 
+
 # ============================================================
 # APP SETUP
 # ============================================================
@@ -20,7 +21,29 @@ UI_DIR   = BASE_DIR / "Ui"
 TOOL_DIR = BASE_DIR / "Tools"
 
 templates = Jinja2Templates(directory=str(UI_DIR / "templates"))
+sarabunLM = TOOL_DIR / "SarabunLM.py"
 
+if sarabunLM.exists():
+    print(f"SarabunLM found: {sarabunLM}")
+else:
+    print(f"SarabunLM NOT found at: {sarabunLM}")
+
+# Run SarabunLM.py with test AI_OUTPUT
+env = os.environ.copy()
+env["AI_OUTPUT"]    = "This is a test output from SarabunLM.py."
+env["TEMPLATE_KEY"] = "ResearchPaper"
+
+result = subprocess.run(
+    [sys.executable, str(sarabunLM)],
+    capture_output=True,
+    text=True,
+    timeout=30,
+    env=env,
+)
+
+print("STDOUT:", result.stdout)
+print("STDERR:", result.stderr)
+print("Return code:", result.returncode)
 app = FastAPI()
 app.mount("/static", StaticFiles(directory=str(UI_DIR)), name="static")
 app.add_middleware(
@@ -82,20 +105,3 @@ def get_config():
 # ============================================================
 # ROUTES — GENERATE
 # ============================================================
-@app.post("/generate")
-def generate(data: GenerateRequest):
-    env = os.environ.copy()
-    env["AI_OUTPUT"] = data.ai_output
-
-    result = subprocess.run(
-        [sys.executable, str(TOOL_DIR / "SarabunLM.py")],
-        capture_output=True,
-        text=True,
-        timeout=30,
-        env=env,
-    )
-
-    if result.returncode != 0:
-        raise HTTPException(status_code=500, detail=result.stderr.strip())
-
-    return {"message": "Document generated successfully."}
