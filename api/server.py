@@ -12,11 +12,14 @@ from pydantic import BaseModel
 
 import api.Tools.DocFormat as DocFormat
 
+# ============================================================
+# APP SETUP — paths must be set BEFORE anything uses them
+# ============================================================
+if getattr(sys, 'frozen', False):
+    BASE_DIR = Path(sys._MEIPASS) / "api"
+else:
+    BASE_DIR = Path(__file__).resolve().parent
 
-# ============================================================
-# APP SETUP
-# ============================================================
-BASE_DIR = Path(__file__).resolve().parent
 UI_DIR   = BASE_DIR / "Ui"
 TOOL_DIR = BASE_DIR / "Tools"
 
@@ -28,22 +31,26 @@ if sarabunLM.exists():
 else:
     print(f"SarabunLM NOT found at: {sarabunLM}")
 
-# Run SarabunLM.py with test AI_OUTPUT
+# When frozen, sys.executable is the .exe itself — not python.
+# Use the bundled script path directly instead of subprocess.
 env = os.environ.copy()
-env["AI_OUTPUT"]    = "This is a test output from SarabunLM.py.weggwgwrg3g4b53y43tehe5herh46u5"
+env["AI_OUTPUT"]    = "This is a test output from SarabunLM.py."
 env["TEMPLATE_KEY"] = "ResearchPaper"
 
-result = subprocess.run(
-    [sys.executable, str(sarabunLM)],
-    capture_output=True,
-    text=True,
-    timeout=30,
-    env=env,
-)
+if not getattr(sys, 'frozen', False):
+    # Only run as subprocess in dev mode
+    result = subprocess.run(
+        [sys.executable, str(sarabunLM)],
+        capture_output=True,
+        text=True,
+        timeout=30,
+        env=env,
+    )
+    print("STDOUT:", result.stdout)
+    print("STDERR:", result.stderr)
+    print("Return code:", result.returncode)
 
-print("STDOUT:", result.stdout)
-print("STDERR:", result.stderr)
-print("Return code:", result.returncode)
+print("Tools dir:", TOOL_DIR)
 
 app = FastAPI()
 
@@ -53,8 +60,6 @@ app.add_middleware(
     allow_methods=["*"],
     allow_headers=["*"],
 )
-
-print("Tools dir:", TOOL_DIR)
 
 # ============================================================
 # MODELS
@@ -80,10 +85,7 @@ def get_style():
 
 @app.get("/api/Ui/app.js")
 def get_script():
-    return FileResponse(
-        UI_DIR / "app.js",
-        media_type="application/javascript" 
-    )
+    return FileResponse(UI_DIR / "app.js", media_type="application/javascript")
 
 @app.get("/favicon.ico")
 def favicon():
@@ -105,11 +107,9 @@ def get_config():
     except Exception as e:
         raise HTTPException(status_code=500, detail=str(e))
 
-
 # ============================================================
 # ROUTES — GENERATE
 # ============================================================
-
 @app.get("/api/Tools/LLM/DataStorage/outputs/output.pdf")
 def get_output_pdf():
     pdf_path = TOOL_DIR / "LLM" / "DataStorage" / "outputs" / "output.pdf"

@@ -1,0 +1,74 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>SarabunLM</title>
+  <link rel="stylesheet" href="/api/Ui/style.css" />
+</head>
+<body>
+
+  <!-- LOADER (required by showLoader()) -->
+  <div id="loader"></div>
+
+  <!-- HEADER -->
+  <header class="header">
+    <div class="header__brand">SARABUNLM</div>
+    <div class="header__controls">
+      <label class="header__label">Template</label>
+      <select class="header__select" id="template-select">
+        <option value="0">None</option>
+      </select>
+    </div>
+  </header>
+
+  <!-- MAIN LAYOUT -->
+  <div class="layout">
+
+    <!-- SIDEBAR -->
+    <aside class="sidebar">
+      <div class="sidebar__sections" id="sections-container"></div>
+      <div class="sidebar__footer">
+        <button class="btn-add" id="btn-add-section">+ Add Section</button>
+        <button class="btn-generate" id="btn-generate">Generate</button>
+      </div>
+    </aside>
+
+    <!-- DOCUMENT PREVIEW -->
+    <main class="main">
+
+    
+          <!-- PDF TOOLBAR (hidden until PDF loads) -->
+      <div id="toolbar">
+        <span id="filename"></span>
+        <button id="zout">−</button>
+        <span id="zoom-val">100%</span>
+        <button id="zin">+</button>
+        <button id="fit">Fit</button>
+        <span id="page-info"></span>
+      </div>
+      <!-- DOCUMENT TEXT PREVIEW -->
+      <div class="document-page" id="document-preview">
+        <div class="doc-placeholder">Preview will appear here after clicking Generate</div>  
+      </div>
+ 
+
+      <!-- DROP ZONE -->
+      <div id="dropzone">
+        <label>
+          <input type="file" id="fileInput" accept="application/pdf">
+        </label>
+      </div>
+
+        <!-- PDF PAGES RENDER HERE -->
+       <div id="viewer" data-pdf-url="/api/Tools/LLM/DataStorage/outputs/output.pdf"></div>
+      
+
+    </main>
+
+  </div>
+
+  <script type="module" src="/api/Ui/app.js"></script>
+
+</body>
+</html>
