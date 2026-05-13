@@ -26,6 +26,7 @@ class PDFViewer {
             document.getElementById('dropzone').style.display = 'none';
             this.renderAllPlaceholders();
             this.setupIntersectionObserver();
+            document.getElementById('document-preview')?.remove();
         } catch (err) {
             console.error('Error loading PDF from URL:', err);
             alert('Could not load PDF from URL.');
@@ -67,6 +68,7 @@ class PDFViewer {
             document.getElementById('dropzone').style.display = 'none';
             this.renderAllPlaceholders();
             this.setupIntersectionObserver();
+            
         } catch (err) {
             console.error('Error loading PDF:', err);
             alert('Could not load PDF. Is it password protected?');

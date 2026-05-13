@@ -38,12 +38,7 @@
     <main class="main">
 
     
-     
-      <!-- DOCUMENT TEXT PREVIEW -->
-      <div class="document-page" id="document-preview">
-        <div class="doc-placeholder">Preview will appear here after clicking Generate</div>
-        
-      <!-- PDF TOOLBAR (hidden until PDF loads) -->
+          <!-- PDF TOOLBAR (hidden until PDF loads) -->
       <div id="toolbar">
         <span id="filename"></span>
         <button id="zout">−</button>
@@ -52,19 +47,22 @@
         <button id="fit">Fit</button>
         <span id="page-info"></span>
       </div>
+      <!-- DOCUMENT TEXT PREVIEW -->
+      <div class="document-page" id="document-preview">
+        <div class="doc-placeholder">Preview will appear here after clicking Generate</div>  
+      </div>
+ 
 
       <!-- DROP ZONE -->
       <div id="dropzone">
-        <h2>Open a PDF</h2>
-        <p>Drop a PDF here or</p>
-        <label>Choose PDF
+        <label>
           <input type="file" id="fileInput" accept="application/pdf">
         </label>
       </div>
 
         <!-- PDF PAGES RENDER HERE -->
        <div id="viewer" data-pdf-url="/api/Tools/LLM/DataStorage/outputs/output.pdf"></div>
-      </div>
+      
 
     </main>
 

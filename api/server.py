@@ -30,7 +30,7 @@ else:
 
 # Run SarabunLM.py with test AI_OUTPUT
 env = os.environ.copy()
-env["AI_OUTPUT"]    = "This is a test output from SarabunLM.py."
+env["AI_OUTPUT"]    = "This is a test output from SarabunLM.py.weggwgwrg3g4b53y43tehe5herh46u5"
 env["TEMPLATE_KEY"] = "ResearchPaper"
 
 result = subprocess.run(
@@ -109,10 +109,12 @@ def get_config():
 # ============================================================
 # ROUTES — GENERATE
 # ============================================================
+
 @app.get("/api/Tools/LLM/DataStorage/outputs/output.pdf")
 def get_output_pdf():
     pdf_path = TOOL_DIR / "LLM" / "DataStorage" / "outputs" / "output.pdf"
     if pdf_path.exists():
         return FileResponse(pdf_path, media_type="application/pdf")
     raise HTTPException(status_code=404, detail="PDF not found.")
+
 app.mount("/api/Ui", StaticFiles(directory=str(UI_DIR)), name="ui")
