@@ -40,7 +40,8 @@ else:
 # ============================================================
 HOST     = "127.0.0.1"
 PORT     = 5000
-RUN_MODE = "local"   # "local" or "browser"
+#RUN_MODE = "local"   # "local" or "browser"
+RUN_MODE = "browser" 
 
 # ============================================================
 # SERVER
