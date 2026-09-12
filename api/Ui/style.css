@@ -356,6 +356,91 @@ body {
     margin: 120px auto;
 }
 
+/* ============================================================
+   10 Text Editing Section
+============================================================ */
+
+.text-editor {
+    width: 700px;
+    margin: 40px auto;
+    
+    border: 1px solid #cccccc00;
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    background: rgba(255, 255, 255, 0);
+}
+
+
+/* =========================
+   Toolbar
+========================= */
+
+.settings-box {
+    display: flex;
+    align-items: center;
+    gap: 5px;
+    padding: 10px;
+    border-bottom: 1px solid #cccccc00;
+    background: #f5f5f500;
+}
+/* =========================
+   Toolbar Buttons
+========================= */
+
+.settings-box button {
+    background: #e0e0e0;
+    border: none;
+    padding: 6px 10px;
+    border-radius: 4px;
+    cursor: pointer;
+
+    transition: background 0.2s ease;
+}
+
+.settings-box button:hover {
+    background: #d5d5d5;
+}
+
+
+/* =========================
+   Text Input
+========================= */
+
+.input-wrapper {
+    padding: 15px;
+}
+
+#text-input {
+    min-height: 300px;
+
+    outline: none;
+    border: none;
+
+    font-family: Arial, sans-serif;
+    font-size: 16px;
+    line-height: 1.6;
+}
+
+#text-input:focus {
+    outline: none;
+}
+/* =========================
+   Custom Shell
+========================= */
+.Terminal-wrapper {
+    width: 700px;
+    height: 400px;
+    margin: 40px auto;
+    
+    border: 1px solid #cccccc00;
+    border-radius: 8px;
+
+    overflow: hidden;
+
+    background: rgba(112, 112, 112, 0.994);
+}
 @keyframes spin {
     to { transform: rotate(360deg); }
 }

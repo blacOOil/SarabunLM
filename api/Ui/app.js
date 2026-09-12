@@ -5,7 +5,28 @@ pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs
 const DEFAULT_PDF_URL = '/api/Tools/LLM/DataStorage/outputs/output.pdf';
 let isStartedGenerated = false;
 
+$(document).ready(function () {
 
+    const $textInput = $('#text-input');
+
+    function modifyText(command, value = null) {
+
+        $textInput.focus();
+
+        document.execCommand(command, false, value);
+    }
+
+    $('.settings-box button').on('click', function () {
+
+        const command = $(this).data('command');
+
+        modifyText(command);
+    });
+
+});
+class Shell_Section{
+
+}
 class PDFViewer {
     constructor() {
         this.pdfDoc = null;
@@ -408,6 +429,13 @@ function renderPreview(sections) {
     preview.innerHTML = html;
 }
 
+/* ============================================================
+   Text Editing Section
+============================================================ */
+    class TextEditor 
+    {
+        
+    }
 
 /* ============================================================
    UTILITY: ESCAPE HTML

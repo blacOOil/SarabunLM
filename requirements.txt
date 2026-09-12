@@ -1,5 +1,5 @@
 fpdf2
-request
+requests
 numpy
 fastapi
 uvicorn[standard]

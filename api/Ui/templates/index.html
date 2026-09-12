@@ -14,55 +14,100 @@
   <!-- HEADER -->
   <header class="header">
     <div class="header__brand">SARABUNLM</div>
-    <div class="header__controls">
-      <label class="header__label">Template</label>
-      <select class="header__select" id="template-select">
-        <option value="0">None</option>
-      </select>
-    </div>
   </header>
 
   <!-- MAIN LAYOUT -->
   <div class="layout">
 
     <!-- SIDEBAR -->
-    <aside class="sidebar">
-      <div class="sidebar__sections" id="sections-container"></div>
+   <aside class="sidebar">
+
+    <div class = "Terminal-wrapper">
+        <h1>Terminal</h1>
+        <div class="CLI_comander" id="CLI_Commader">
+            <div class="input-wrapper">
+        <div 
+            id="text-output"
+            contenteditable="true"
+            spellcheck="true">
+            command here:
+        </div>
+        <div 
+            id="text-input"
+            contenteditable="true"
+            spellcheck="true">
+        </div>
+
+        </div>
+        
+
+    </div>
+   </div> 
+
       <div class="sidebar__footer">
-        <button class="btn-add" id="btn-add-section">+ Add Section</button>
-        <button class="btn-generate" id="btn-generate">Generate</button>
       </div>
     </aside>
 
     <!-- DOCUMENT PREVIEW -->
     <main class="main">
-
-    
-          <!-- PDF TOOLBAR (hidden until PDF loads) -->
-      <div id="toolbar">
-        <span id="filename"></span>
-        <button id="zout">−</button>
-        <span id="zoom-val">100%</span>
-        <button id="zin">+</button>
-        <button id="fit">Fit</button>
-        <span id="page-info"></span>
-      </div>
-      <!-- DOCUMENT TEXT PREVIEW -->
-      <div class="document-page" id="document-preview">
-        <div class="doc-placeholder">Preview will appear here after clicking Generate</div>  
-      </div>
- 
-
-      <!-- DROP ZONE -->
-      <div id="dropzone">
-        <label>
-          <input type="file" id="fileInput" accept="application/pdf">
-        </label>
-      </div>
-
-        <!-- PDF PAGES RENDER HERE -->
-       <div id="viewer" data-pdf-url="/api/Tools/LLM/DataStorage/outputs/output.pdf"></div>
       
+<div class="text-editor" id="text-editor">
+
+    <div class="settings-box">
+
+        <button type="button" data-command="bold">
+            <b>B</b>
+        </button>
+
+        <button type="button" data-command="italic">
+            <i>I</i>
+        </button>
+
+        <button type="button" data-command="underline">
+            <u>U</u>
+        </button>
+
+        <button type="button" data-command="insertUnorderedList">
+            • List
+        </button>
+
+        <button type="button" data-command="insertOrderedList">
+            1. List
+        </button>
+
+        <button type="button" data-command="justifyLeft">
+            Left
+        </button>
+
+        <button type="button" data-command="justifyCenter">
+            Center
+        </button>
+
+        <button type="button" data-command="justifyRight">
+            Right
+        </button>
+
+        <button type="button" data-command="removeFormat">
+            Clear
+        </button>
+
+    </div>
+
+    <div class="input-wrapper">
+
+        <div 
+            id="text-input"
+            contenteditable="true"
+            spellcheck="true">
+        </div>
+
+    </div>
+   
+
+</div>
+
+        
+      </div>
 
     </main>
 
